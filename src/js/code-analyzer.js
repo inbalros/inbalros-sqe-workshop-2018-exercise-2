@@ -41,11 +41,8 @@ function insertToElementsDic(line,type,name,condition,value,endLine) {
     for (var i = 0; i < elementsDic.length; i++) {
         if (elementsDic[i].line+elementsDic[i].type+elementsDic[i].value+elementsDic[i].name+elementsDic[i].condition == line+type+value+name+condition) {
             flag = true;}    }
-
-    if(endLine==0)
-    {
-        endLine == line;
-    }
+    if(endLine==0) {
+        endLine == line;}
     if (!flag) {
         elementsDic.push({
             line: line,
@@ -53,9 +50,7 @@ function insertToElementsDic(line,type,name,condition,value,endLine) {
             name: name,
             condition: condition,
             value: value,
-            endLine: endLine
-        });
-    }
+            endLine: endLine});}
 }
 
 function handleIdentifier(node)
@@ -82,7 +77,7 @@ function handleArrayExpression(node) {
     var list =[];
     for(var i=0;i<node.elements.length;i++)
     {
-        list.push(functionDic[node.elements[i].type](node.elements[i]))
+        list.push(functionDic[node.elements[i].type](node.elements[i]));
     }
     return list;
 }
@@ -138,8 +133,7 @@ function handleReturnStatement(node)
 
 function handleIfStatement(node)
 {
-    if(node.alternate && node.alternate.type == 'IfStatement')
-    {
+    if(node.alternate && node.alternate.type == 'IfStatement') {
         var lineAlt = node.alternate.loc.start.line;
         var typeAlt = node.alternate.type;
         var nameAlt = '';
@@ -147,8 +141,7 @@ function handleIfStatement(node)
         for (var i = 0; i < elementsDic.length; i++) {
             if (elementsDic[i].line+elementsDic[i].type+elementsDic[i].name+elementsDic[i].condition == lineAlt+typeAlt+nameAlt+conditionAlt) {
                 elementsDic[i].type = 'ElseIfStatement';}}}
-        else {
-        handleElseStatement(node.alternate)}
+    else {handleElseStatement(node.alternate);}
     var line = node.loc.start.line;
     var type = node.type;
     var name = '';
@@ -157,12 +150,13 @@ function handleIfStatement(node)
     var endLine = node.loc.end.line;
     insertToElementsDic(line,type,name,condition,value,endLine);
 }
+
 function handleElseStatement(node)
 {
     if(node)
     {
         var line = node.loc.start.line;
-        var type = "ElseStatment";
+        var type = 'ElseStatment';
         var name = '';
         var condition ='';
         var value = '' ;
@@ -239,7 +233,7 @@ function handleFunctionDeclaration(node) {
         name = node.params[index].name;
         condition = '';
         value = '';
-        var endLine = node.loc.end.line;
+        endLine = node.loc.end.line;
         insertToElementsDic(line, type, name, condition, value,endLine);
     }
 }

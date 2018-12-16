@@ -119,7 +119,7 @@ describe('The javascript parser', () => {
         assert.equal(
             model[0].condition, '' );
         assert.equal(
-            model[0].value, 'n - 1' );
+            model[0].value, '(n - 1)' );
     });
 
     it('is parsing a while correctly', () => {
@@ -134,7 +134,7 @@ describe('The javascript parser', () => {
         assert.equal(
             model[0].name, '' );
         assert.equal(
-            model[0].condition, 'low <= high' );
+            model[0].condition, '(low <= high)' );
         assert.equal(
             model[0].value, '' );
     });
@@ -153,24 +153,24 @@ describe('The javascript parser', () => {
         assert.equal(
             model[0].condition, '' );
         assert.equal(
-            model[0].value, 'low + high / 2' );
+            model[0].value, '((low + high) / 2)' );
     });
 
     it('is parsing if and member correctly', () => {
         parseCode('if (X < V[mid]){}else{}');
         let model = getModel();
         assert.equal(
-            model.length, 1 );
+            model.length, 2 );
         assert.equal(
-            model[0].line, 1 );
+            model[1].line, 1 );
         assert.equal(
-            model[0].type, 'IfStatement' );
+            model[1].type, 'IfStatement' );
         assert.equal(
-            model[0].name, '' );
+            model[1].name, '' );
         assert.equal(
-            model[0].condition, 'X < V[mid]' );
+            model[1].condition, '(X < V[mid])' );
         assert.equal(
-            model[0].value, '' );
+            model[1].value, '' );
     });
 
     it('is parsing else if and member correctly', () => {
@@ -185,7 +185,7 @@ describe('The javascript parser', () => {
         assert.equal(
             model[0].name, '' );
         assert.equal(
-            model[0].condition, 'X > V[mid]' );
+            model[0].condition, '(X > V[mid])' );
         assert.equal(
             model[0].value, '' );
 
@@ -196,7 +196,7 @@ describe('The javascript parser', () => {
         assert.equal(
             model[1].name, '' );
         assert.equal(
-            model[1].condition, 'X < V[mid]' );
+            model[1].condition, '(X < V[mid])' );
         assert.equal(
             model[1].value, '' );
     });
@@ -225,7 +225,7 @@ describe('The javascript parser', () => {
         assert.equal(
             model[1].name, '' );
         assert.equal(
-            model[1].condition, 'X > V[mid]' );
+            model[1].condition, '(X > V[mid])' );
         assert.equal(
             model[1].value, '' );
 
@@ -236,7 +236,7 @@ describe('The javascript parser', () => {
         assert.equal(
             model[2].name, '' );
         assert.equal(
-            model[2].condition, 'X < V[mid]' );
+            model[2].condition, '(X < V[mid])' );
         assert.equal(
             model[2].value, '' );
 
@@ -344,7 +344,7 @@ describe('The javascript parser', () => {
         assert.equal(
             model[2].name, '' );
         assert.equal(
-            model[2].condition, 'i < 4' );
+            model[2].condition, '(i < 4)' );
         assert.equal(
             model[2].value, '' );
     });
@@ -361,7 +361,7 @@ describe('The javascript parser', () => {
         assert.equal(
             model[0].name, '' );
         assert.equal(
-            model[0].condition, 'a < 3' );
+            model[0].condition, '(a < 3)' );
         assert.equal(
             model[0].value, '' );
     });
@@ -410,5 +410,24 @@ describe('The javascript parser', () => {
             model[1].condition, '' );
         assert.equal(
             model[1].value, 'i++' );
+    });
+
+
+    it('is parsing array correctly', () => {
+        parseCode('let a = [1,2,3];');
+        let model = getModel();
+
+        assert.equal(
+            model.length, 1 );
+        assert.equal(
+            model[0].line, 1 );
+        assert.equal(
+            model[0].type, 'VariableDeclarator' );
+        assert.equal(
+            model[0].name, 'a' );
+        assert.equal(
+            model[0].condition, '' );
+        assert.equal(
+            model[0].value, '1,2,3' );
     });
 });

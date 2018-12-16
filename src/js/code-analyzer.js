@@ -41,8 +41,6 @@ function insertToElementsDic(line,type,name,condition,value,endLine) {
     for (var i = 0; i < elementsDic.length; i++) {
         if (elementsDic[i].line+elementsDic[i].type+elementsDic[i].value+elementsDic[i].name+elementsDic[i].condition == line+type+value+name+condition) {
             flag = true;}    }
-    if(endLine==0) {
-        endLine == line;}
     if (!flag) {
         elementsDic.push({
             line: line,

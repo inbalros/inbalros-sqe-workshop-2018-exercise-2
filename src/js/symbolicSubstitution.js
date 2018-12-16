@@ -13,7 +13,6 @@ var programObject;
 
 const getSubstitutionModel = (model,inputVector,program) => {
     allVariablesDic= [] ;localVariables =[];inputVariables=[];variableSubs= [] ;expresionsDic= [] ; programObject = null;inputVectorVar=[];
-
     var progArray = program.split('\n');
     separateModeld(model);
     prepareExpressions();
@@ -58,14 +57,27 @@ function prepareInputVector(inputVector) {
     for (var i = 0; i < array.length; i++) {
         if(array[i].startsWith('[')) {
             var list =[];
-            list.push(array[i].substring(1, array[i].length));
-            i++;
+            list.push(array[i].substring(1, array[i].length)); i++;
             while(!array[i].endsWith(']') && i<array.length) {
                 list.push(array[i]);
                 i++;}
             list.push(array[i].substring(0, array[i].length- 1));
             inputVectorVar.push(list);}
-        else {inputVectorVar.push(array[i]);}}
+        else {
+            contprepareInputVector(inputVector,i,array);
+        }
+    }
+}
+
+function contprepareInputVector(inputVector,i,array) {
+    if(array[i].startsWith('\'') || array[i].startsWith('"')) {
+        var mystring ='';
+        while(!array[i].endsWith('\'') && !array[i].endsWith('"')) {
+            mystring = mystring+array[i]+',';
+            i++;}
+        mystring = mystring+array[i];
+        inputVectorVar.push(mystring);}
+    else{inputVectorVar.push(array[i]);}
 }
 
 function prepareVariablesTypes(inputVector,model) {
@@ -184,16 +196,29 @@ function prepareNewSubsProgram(model,progArray) {
         else if(i+1>programObject.from && i+1<=programObject.to) {
             var keep = true;
             var thisType = null;
-            for (var j = 0; j < model.length && keep; j++) {
-                if(i+1 == model[j].line){
-                    if(localVariables.includes(model[j].name)){
-                        keep = false;}
-                    else {
-                        thisType = model[j].type;}}}
-            if(keep) {
-                newProg.push({
-                    index:i+1,line: progArray[i],color:0,type:thisType});}}}
+            var ans = checkIfKeep(keep,thisType,i,model);
+            keep = ans[0];
+            thisType = ans[1];
+            newProg = addIfTrue(keep,thisType,i,model,progArray,newProg);
+        }}
     return newProg;
+}
+
+function addIfTrue(keep,thisType,i,model,progArray,newProg) {
+    if(keep) {
+        newProg.push({
+            index:i+1,line: progArray[i],color:0,type:thisType});}
+    return newProg;
+}
+
+function checkIfKeep(keep,thisType,i,model) {
+    for (var j = 0; j < model.length && keep; j++) {
+        if(i+1 == model[j].line){
+            if(localVariables.includes(model[j].name)){
+                keep = false;}
+            else {
+                thisType = model[j].type;}}}
+    return [keep,thisType];
 }
 
 function getSubstitution(newProg) {
@@ -220,15 +245,24 @@ function colorSubProgram(SubsProg) {
     let model = getModel();
     for (var i = 0; i < model.length; i++) {
         if(oneCheckForcolorSubProgram(model,i)) {
-            for (var j = inputVariables.length - 1; j >= 0; j--) {
-                model[i].condition  = model[i].condition.replaceAll(inputVariables[j].variable, inputVariables[j].value);}
 
-            var assignment = eval(model[i].condition);
-            if(assignment == true) {
-                SubsProg[model[i].line-1].color = 1;}
-            else {
-                SubsProg[model[i].line-1].color = 2;}}}
+            SubsProg = helperFunction(model,i,SubsProg);
 
+        }}
+    return SubsProg;
+}
+
+function helperFunction(model,i,SubsProg) {
+    for (var j = inputVariables.length - 1; j >= 0; j--) {
+        model[i].condition = model[i].condition.replaceAll(inputVariables[j].variable, inputVariables[j].value);
+    }
+    var assignment = eval(model[i].condition);
+    if (assignment == true) {
+        SubsProg[model[i].line - 1].color = 1;
+    }
+    else {
+        SubsProg[model[i].line - 1].color = 2;
+    }
     return SubsProg;
 }
 

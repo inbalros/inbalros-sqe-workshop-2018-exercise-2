@@ -140,7 +140,7 @@ describe('The symbolic Substitution parser', () => {
     });
 
     it('is parsing simple substitution with global var from under - red', () => {
-        var codeToParse = 'function foo(x){\nif(a>2){\n return 2;\n}}\nlet a = x+1;';
+        var codeToParse = 'function foo(x){\nif(a>2){\n return 2;\n}}\n let a = x+1;';
         parseCode(codeToParse);
         let model = getModel();
         model.sort(compare);
@@ -221,5 +221,55 @@ describe('The symbolic Substitution parser', () => {
             subModel[2].color, 0 );
     });
 
+    it('is parsing two seperate ifs statments', () => {
+        var codeToParse = 'function foo(x,y){ \n if(x==2) \n { \n if(y==3) \n { \n return 3; \n } \n return 2; \n } \n }'
+        parseCode(codeToParse);
+        let model = getModel();
+        model.sort(compare);
+        let subModel = getSubstitutionModel(model,'2,3',codeToParse);
+        console.log(subModel);
+        assert.equal(
+            subModel.length, 10);
+        assert.equal(
+            subModel[1].line, ' if(x==2) ' );
+        assert.equal(
+            subModel[1].color, 1 );
+        assert.equal(
+            subModel[3].line, ' if(y==3) ' );
+        assert.equal(
+            subModel[3].color, 1 );
+    });
+
+    it('is parsing if VariableDeclarator with no value correctly', () => {
+        var codeToParse = 'function foo(x){\n let a; \nif(x>2){\n return 2; \n }}';
+        parseCode(codeToParse);
+        let model = getModel();
+        model.sort(compare);
+        let subModel = getSubstitutionModel(model,'2',codeToParse);
+        assert.equal(
+            subModel.length, 5);
+        assert.equal(
+            subModel[1].line, ' let a; ' );
+        assert.equal(
+            subModel[1].color, 0 );
+        assert.equal(
+            subModel[2].line, 'if(x>2){' );
+        assert.equal(
+            subModel[2].color, 2 );
+    });
+
+    it('is parsing simple substitution with global var from under - red', () => {
+        var codeToParse = 'function foo(x){\n let b = 2; \n if(a>b){\n return 2;\n}}\n let a = x+1;';
+        parseCode(codeToParse);
+        let model = getModel();
+        model.sort(compare);
+        let subModel = getSubstitutionModel(model,'1',codeToParse);
+        assert.equal(
+            subModel.length, 4);
+        assert.equal(
+            subModel[1].line, ' if((x + 1)>2){' );
+        assert.equal(
+            subModel[1].color, 2 );
+    });
 
 });

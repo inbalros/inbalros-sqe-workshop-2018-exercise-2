@@ -12,8 +12,7 @@ $(document).ready(function () {
         model.sort(compare);
         let subModel = getSubstitutionModel(model,inputVector,codeToParse);
         document.getElementById('tableWrapper').innerHTML = createTable(subModel);
-        //$('#parsedCode').val(JSON.stringify(parsedCode, null, 2));
-    });
+     });
 });
 
 function compare(a,b) {

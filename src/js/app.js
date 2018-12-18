@@ -12,7 +12,7 @@ $(document).ready(function () {
         model.sort(compare);
         let subModel = getSubstitutionModel(model,inputVector,codeToParse);
         document.getElementById('tableWrapper').innerHTML = createTable(subModel);
-     });
+    });
 });
 
 function compare(a,b) {
